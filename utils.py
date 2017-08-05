@@ -7,6 +7,7 @@ image from a set of samples or weights.
 """
 
 import numpy
+import PIL.Image as Image
 import os
 import gzip
 import urllib
@@ -18,6 +19,14 @@ def update_dictionary_items(dict1, dict2):
     for k in dict2:
         if k in dict1:
             dict1[k] = dict2[k]
+
+def save_results(da, cl):
+    numpy.save('w'+str(cl)+'.npy', da.W.get_value(borrow=True).T)
+    image = Image.fromarray(
+        tile_raster_images(X=da.W.get_value(borrow=True).T,
+                           img_shape=(28, 28), tile_shape=(10, 10),
+                           tile_spacing=(1, 1)))
+    image.save('filters_corruption_'+str(cl)+'.png')
 
 def softmax(x):
     xt = np.exp(x - np.max(x))
