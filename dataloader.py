@@ -1,27 +1,21 @@
-import numpy as np
-import gzip
-import six.moves.cPickle as pickle
-import theano
-import theano.tensor as T
-import numpy
 import os
-from nltk import sent_tokenize, word_tokenize
 import csv
-import itertools
+import gzip
 import nltk
-import sys
-from datetime import datetime
-import rnn
-import utils
+import theano
+import itertools
+import numpy as np
+import theano.tensor as T
+import six.moves.cPickle as pickle
 
 def load_reddit(vocabulary_size):
         unknown_token = "UNKNOWN_TOKEN"
         sentence_start_token = "SENTENCE_START"
         sentence_end_token = "SENTENCE_END"
 
-        print(sent_tokenize("Testing. NLTK sent_tokenize"))
-        print(word_tokenize("Testing. NLTK word_tokenize"))
-        print(nltk.FreqDist(word_tokenize("Testing. NLTK FreqDist of word_tokenize")).items())
+        print(nltk.sent_tokenize("Testing. NLTK sent_tokenize"))
+        print(nltk.word_tokenize("Testing. NLTK word_tokenize"))
+        print(nltk.FreqDist(nltk.word_tokenize("Testing. NLTK FreqDist of word_tokenize")).items())
 
         temp = [1,2,3,4,5]
 
@@ -140,10 +134,10 @@ def load_mnist():
         variable) would lead to a large decrease in performance.
         """
         data_x, data_y = data_xy
-        shared_x = theano.shared(numpy.asarray(data_x,
+        shared_x = theano.shared(np.asarray(data_x,
                                                dtype=theano.config.floatX),
                                  borrow=borrow)
-        shared_y = theano.shared(numpy.asarray(data_y,
+        shared_y = theano.shared(np.asarray(data_y,
                                                dtype=theano.config.floatX),
                                  borrow=borrow)
         # When storing data on the GPU it has to be stored as floats
