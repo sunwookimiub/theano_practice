@@ -5,8 +5,7 @@ import itertools
 import nltk
 import sys
 from datetime import datetime
-import rnnnumpy
-import rnntheano
+import rnn
 import utils
 
 def load_reddit(vocabulary_size):

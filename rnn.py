@@ -4,8 +4,8 @@ import numpy as np
 import utils
 
 class RNNTheano:
-    def __init__(self, input, word_dim, params={}, hidden_dim=100, bptt_truncate=4):
-        self.params = {'word_dim': 1, 'learning_rate': 1.0, 'hidden_dim': 1, 'bptt_truncate': 1}
+    def __init__(self, input, params={}):
+        self.params = {'word_dim': 1, 'hidden_dim': 1, 'bptt_truncate': 1}
         utils.update_dictionary_items(self.params, params)
         intvl = np.sqrt(1./self.params['hidden_dim'])
         self.U = self.init_weights(-intvl, intvl, (self.params['hidden_dim'], self.params['word_dim'])) 
@@ -23,7 +23,7 @@ class RNNTheano:
         return theano.shared(np.asarray(X, dtype=theano.config.floatX))
 
     def init_weights(self, low, high, shape, coef=1.0):
-        return self.shared_floatX(coef * np.random.uniform(low, high, shape))
+        return self.shared_floatX(coef * np.random.uniform(low, high, shape)) # coef = 4?
 
     def model(self, x_t, s_t_prev): #Forward Prop
         s_t = T.tanh(self.U[:,x_t] + self.W.dot(s_t_prev))
@@ -41,7 +41,7 @@ class RNNTheano:
         self.forward_propagation = theano.function([self.x], o)
         self.predict = theano.function([self.x], prediction)
         self.ce_error = theano.function([self.x,self.y], o_error)
-        self.sgd_step = theano.function([self.x, self.y, lr], [], updates=
+        self.train = theano.function([self.x, self.y, lr], [], updates=
                 [[p, p - g * lr] for p,g in zip(self.weights, grads)])
 
     def calculate_total_loss(self, X, Y):

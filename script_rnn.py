@@ -18,30 +18,27 @@ def parseArguments():
 def main():
     args = parseArguments()
 
-    vocabulary_size = 8000
-    X_train, y_train = dl.load_reddit(vocabulary_size)
+    X_train, y_train = dl.load_reddit(args.vocabulary_size)
 
     # Get subset
     X_train = X_train[:100]
     y_train = y_train[:100]
 
-    learning_rate = 0.005
-
     x = T.ivector('x')
-    input_params = {'word_dim': args.vocabulary_size, 'learning_rate': args.learning_rate, 'hidden_dim': args.hidden_dim, 'bptt_truncate': args.bptt_truncate}
+    input_params = {'word_dim': args.vocabulary_size, 'hidden_dim': args.hidden_dim, 'bptt_truncate': args.bptt_truncate}
     rnnalgs = {
-                'Theano Impl.': rnn.RNNTheano(x, vocabulary_size, input_params), 
+                'Theano Impl.': rnn.RNNTheano(x, input_params), 
               }
 
     for learnername, learner in rnnalgs.iteritems():
         print "Running {0} on {1}".format(learnername, learner.params)
-        print "Testing: Expected loss for random predictions: {}".format(np.log(vocabulary_size))
+        print "Testing: Expected loss for random predictions: {}".format(np.log(args.vocabulary_size))
         print "Testing: Actual loss: {}".format(learner.calculate_loss(X_train[:10], y_train[:10]))
         print "Begin Learning with SGD and BPTT"
         num_examples_seen = 0
         for epoch in range(args.epoch):
             for i in range(len(y_train)):
-                learner.sgd_step(X_train[i], y_train[i], learning_rate)
+                learner.train(X_train[i], y_train[i], args.learning_rate)
                 num_examples_seen += 1
             loss = learner.calculate_loss(X_train, y_train)
             print "Epoch {}: {} Training Loss after {} examples seen.".format(epoch, loss, num_examples_seen)
